@@ -8,20 +8,29 @@ class App extends React.Component {
       persons: [
         {name: 'Arto Hellas'}
       ],
-      newName: ' '
+      newName: ''
     }
-  } 
+  }
+
+  isDuplicate = (element) => {
+    return element.name === this.state.newName
+  }
 
   addName = (event) => {
     event.preventDefault()
-    const personObject = {
-      name: this.state.newName
+
+    if (!this.state.persons.some(this.isDuplicate))
+    {
+      const personObject = {
+        name: this.state.newName
+      }
+
+      const persons = this.state.persons.concat(personObject)
+      this.setState({
+        persons,
+        newName: ' '
+      })
     }
-    const persons = this.state.persons.concat(personObject)
-    this.setState({
-      persons,
-      newName: ' '
-    })
   }
 
   handleNameChange = (event) => {
