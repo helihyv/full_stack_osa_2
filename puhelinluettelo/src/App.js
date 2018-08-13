@@ -1,6 +1,28 @@
 import React from 'react';
 import './App.css'
 
+const FilterForm = ({filterText, onChange}) => {
+  return(
+    <div>
+      rajaa näytettäviä nimiä:  <input
+                                    value={filterText}
+                                    onChange={onChange}
+                                  />
+    </div>
+
+  )
+}
+
+const Person = ({person}) => {
+  return(
+    <tr>
+      <td>{person.name}</td>
+      <td>{person.number}</td>
+    </tr>
+  )
+}
+
+
 class App extends React.Component {
   constructor(props) {
     super (props)
@@ -63,12 +85,12 @@ class App extends React.Component {
     return (
       <div>
         <h2>Puhelinluettelo</h2>
-        <div>
-          rajaa näytettäviä nimiä:  <input
-                                        value={this.state.filterText}
-                                        onChange={this.handleFilterChange}
-                                      />
-        </div>
+
+        <FilterForm
+          filterText={this.state.filtertext}
+          onChange={this.handleFilterChange}
+        />
+
         <form onSubmit={this.addPerson}>
           <div>
             nimi: <input
@@ -90,11 +112,8 @@ class App extends React.Component {
           <table>
             <tbody>
               {shownPersons.map((person ) =>
-                <tr key={person.name}>
-                  <td>{person.name}</td>
-                  <td>{person.number}</td>
-                </tr>)}
-              </tbody>
+                <Person key={person.name} person={person} />)}
+            </tbody>
           </table>
 
       </div>
