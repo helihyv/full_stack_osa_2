@@ -1,0 +1,10 @@
+img {
+  max-width: 450px;
+  max-height: 450px;
+  width: auto;
+  height: auto;
+}
+ul{
+  list-style-type: none;
+  padding-left: 0px;
+}
