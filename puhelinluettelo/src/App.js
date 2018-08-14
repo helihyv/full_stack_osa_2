@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios'
 import './App.css'
 
 const FilterForm = ({filterText, onChange}) => {
@@ -27,16 +28,19 @@ class App extends React.Component {
   constructor(props) {
     super (props)
     this.state = {
-      persons: [
-        { name: 'Arto Hellas', number: '040-123456' },
-        { name: 'Martti Tienari', number: '040-123456' },
-        { name: 'Arto Järvinen', number: '040-123456' },
-        { name: 'Lea Kutvonen', number: '040-123456' }
-      ],
+      persons: [],
       newName: '',
       newNumber: '',
       filterText: ''
     }
+  }
+
+  componentDidMount() {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        this.setState({persons: response.data})
+      })
   }
 
   isDuplicate = (element) => {
