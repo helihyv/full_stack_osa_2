@@ -33,6 +33,11 @@ class App extends Component {
     this.setState({findText: event.target.value })
   }
 
+  handleCountryClicked = (event) => {
+    this.setState({findText: event.target.textContent})
+
+  }
+
     render() {
 
     const shownCountries = this.state.allCountries.filter((country) => {
@@ -63,7 +68,12 @@ class App extends Component {
 
           <ul>
             {shownCountries.map(country =>
-            <li key={country.name}>{country.name}</li>)}
+            <li
+              key={country.name}
+              onClick={this.handleCountryClicked}
+            >
+              {country.name}
+            </li>)}
           </ul>
         </div>
       )
