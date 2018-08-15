@@ -14,11 +14,19 @@ const FilterForm = ({filterText, onChange}) => {
   )
 }
 
-const Person = ({person}) => {
+const Person = ({person, removeFunction}) => {
   return(
     <tr>
       <td>{person.name}</td>
       <td>{person.number}</td>
+      <td>
+        <button
+          type='button'
+          onClick={removeFunction}
+        >
+          Poista
+        </button>
+      </td>
     </tr>
   )
 }
@@ -41,10 +49,13 @@ class App extends React.Component {
       .getAll()
       .then(response => {
         this.setState({persons: response.data})
+        console.log(this.state.persons)
       })
       .catch(error => {
         alert(`Puhelinluettelon lataaminen tietokannasta epäonnistui: ${error}`)
       })
+
+
   }
 
   isDuplicate = (element) => {
@@ -88,6 +99,28 @@ class App extends React.Component {
     this.setState({filterText: event.target.value})
   }
 
+  removePerson = (id) => {
+    return () => {
+      const name = (this.state.persons.find((person) => {
+        return person.id === id
+      })).name
+
+      if (window.confirm(`Poistetaanko ${name}?`)) {
+        personService
+          .deletePerson(id)
+          .then(response => {
+            const persons = this.state.persons.filter(person =>{
+              return (person.id !== id)
+              })
+            this.setState({persons})
+          })
+          .catch(error => {
+            alert(`Henkilön ${name} poistaminen epäonnistui:  ${error}`)
+          })
+      }
+    }
+  }
+
   render() {
 
     const shownPersons = this.state.persons.filter((person) =>
@@ -126,7 +159,12 @@ class App extends React.Component {
           <table>
             <tbody>
               {shownPersons.map((person ) =>
-                <Person key={person.name} person={person} />)}
+                <Person
+                  key={person.name}
+                  person={person}
+                  removeFunction={this.removePerson(person.id)}
+                />
+              )}
             </tbody>
           </table>
 
