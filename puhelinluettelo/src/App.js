@@ -1,6 +1,6 @@
 import React from 'react';
-import axios from 'axios'
 import './App.css'
+import personService from './services/persons'
 
 const FilterForm = ({filterText, onChange}) => {
   return(
@@ -36,10 +36,14 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    axios
-      .get('http://localhost:3001/persons')
+
+    personService
+      .getAll()
       .then(response => {
         this.setState({persons: response.data})
+      })
+      .catch(error => {
+        alert(`Puhelinluettelon lataaminen tietokannasta epäonnistui: ${error}`)
       })
   }
 
@@ -57,8 +61,8 @@ class App extends React.Component {
         number: this.state.newNumber
       }
 
-      axios
-        .post('http://localhost:3001/persons', personObject)
+      personService
+        .create(personObject)
         .then(response => {
           this.setState({
             persons: this.state.persons.concat(response.data),
