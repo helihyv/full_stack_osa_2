@@ -57,12 +57,18 @@ class App extends React.Component {
         number: this.state.newNumber
       }
 
-      const persons = this.state.persons.concat(personObject)
-      this.setState({
-        persons,
-        newName: '',
-        newNumber: ''
-      })
+      axios
+        .post('http://localhost:3001/persons', personObject)
+        .then(response => {
+          this.setState({
+            persons: this.state.persons.concat(response.data),
+            newName: '',
+            newNumber: ''
+          })
+        })
+        .catch(error => {
+          alert(`Henkilön lisääminen tietokantaan epäonnistui: ${error}`)
+        })
     }
   }
 
