@@ -62,10 +62,6 @@ class App extends React.Component {
       .then(response => {
         this.setState({persons: response.data})
       })
-      .catch(error => {
-        alert(`Puhelinluettelon lataaminen tietokannasta epäonnistui: ${error}`)
-      })
-
 
   }
 
@@ -99,9 +95,7 @@ class App extends React.Component {
           },5000)
 
         })
-        .catch(error => {
-          alert(`Henkilön lisääminen tietokantaan epäonnistui: ${error}`)
-        })
+
     }
 
     else {
@@ -124,9 +118,26 @@ class App extends React.Component {
             },5000)
 
           })
-          .catch(error => {
-            alert(`Henkilön ${personToReplace.name} puhelinnumeron muuttaminen epäonnistui: ${error}`)
+
+          .catch(error => { //henkiloä ei löytynytkään palvelimelta
+            //...joten lisätään hänet uudelleen
+            personService
+              .create(personToReplace)
+              .then(response => {
+                let persons = this.state.persons
+                persons.splice(indexOfPersonToReplace,1,response.data)
+                this.setState({
+                  persons,
+                  newName: '',
+                  newNumber: '',
+                  notification: `lisättiin uudelleen henkilö ${response.data.name}`
+                })
+                setTimeout(() => {
+                  this.setState({notification: null})
+                }, 5000)
+              })
           })
+
       }
     }
   }
