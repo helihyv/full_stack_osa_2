@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css'
+import './index.css'
 import personService from './services/persons'
 
 const FilterForm = ({filterText, onChange}) => {
@@ -31,6 +31,17 @@ const Person = ({person, removeFunction}) => {
   )
 }
 
+const Notification = ({ message}) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="notification">
+      {message}
+    </div>
+  )
+}
 
 class App extends React.Component {
   constructor(props) {
@@ -39,7 +50,8 @@ class App extends React.Component {
       persons: [],
       newName: '',
       newNumber: '',
-      filterText: ''
+      filterText: '',
+      notification: null
     }
   }
 
@@ -79,8 +91,13 @@ class App extends React.Component {
           this.setState({
             persons: this.state.persons.concat(response.data),
             newName: '',
-            newNumber: ''
+            newNumber: '',
+            notification: `lisättiin ${response.data.name}`
           })
+          setTimeout(() => {
+            this.setState({notification: null})
+          },5000)
+
         })
         .catch(error => {
           alert(`Henkilön lisääminen tietokantaan epäonnistui: ${error}`)
@@ -99,8 +116,13 @@ class App extends React.Component {
             this.setState({
               persons,
               newName: '',
-              newNumber: ''
+              newNumber: '',
+              notification: `muutettiin henkilön ${response.data.name} puhelinnumero`
             })
+            setTimeout(() => {
+              this.setState({notification: null})
+            },5000)
+
           })
           .catch(error => {
             alert(`Henkilön ${personToReplace.name} puhelinnumeron muuttaminen epäonnistui: ${error}`)
@@ -131,10 +153,16 @@ class App extends React.Component {
         personService
           .deletePerson(id)
           .then(response => {
-            const persons = this.state.persons.filter(person =>{
+              const persons = this.state.persons.filter(person =>{
               return (person.id !== id)
               })
-            this.setState({persons})
+            this.setState({
+              persons,
+              notification: `poistettiin  ${name}`
+            })
+            setTimeout(() => {
+              this.setState({notification: null})
+            }, 5000)
           })
           .catch(error => {
             alert(`Henkilön ${name} poistaminen epäonnistui:  ${error}`)
@@ -154,6 +182,8 @@ class App extends React.Component {
     return (
       <div>
         <h2>Puhelinluettelo</h2>
+
+        <Notification message={this.state.notification} />
 
         <FilterForm
           filterText={this.state.filtertext}
