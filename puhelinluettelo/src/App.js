@@ -49,7 +49,6 @@ class App extends React.Component {
       .getAll()
       .then(response => {
         this.setState({persons: response.data})
-        console.log(this.state.persons)
       })
       .catch(error => {
         alert(`Puhelinluettelon lataaminen tietokannasta epäonnistui: ${error}`)
@@ -65,8 +64,10 @@ class App extends React.Component {
   addPerson = (event) => {
     event.preventDefault()
 
-    if (!this.state.persons.some(this.isDuplicate))
-    {
+    const indexOfPersonToReplace = this.state.persons.findIndex(this.isDuplicate)
+
+
+    if (indexOfPersonToReplace === -1) { //Ei samannimistä, luodaan uusi henkilö
       const personObject = {
         name: this.state.newName,
         number: this.state.newNumber
@@ -84,6 +85,27 @@ class App extends React.Component {
         .catch(error => {
           alert(`Henkilön lisääminen tietokantaan epäonnistui: ${error}`)
         })
+    }
+
+    else {
+      const personToReplace = this.state.persons[indexOfPersonToReplace]
+      if (window.confirm(`${personToReplace.name} on jo luettelossa, korvataanko vanha numero uudella?`)) {
+        personToReplace.number = this.state.newNumber
+        personService
+          .update(personToReplace.id,personToReplace)
+          .then(response => {
+            let persons = this.state.persons
+            this.state.persons.splice(indexOfPersonToReplace,1,response.data)
+            this.setState({
+              persons,
+              newName: '',
+              newNumber: ''
+            })
+          })
+          .catch(error => {
+            alert(`Henkilön ${personToReplace.name} puhelinnumeron muuttaminen epäonnistui: ${error}`)
+          })
+      }
     }
   }
 
